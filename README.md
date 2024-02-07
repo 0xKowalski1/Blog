@@ -17,7 +17,11 @@ docker run -d -p 8080:80 blog
 ## Dev
 
 ```
-docker run -d -p 8080:80 --name dev-blog -v $(pwd)/src:/usr/share/nginx/html -v $(pwd)/blogs:/usr/share/nginx/html/blogs nginx:alpine
+docker run -d -p 8080:80 --name dev-blog \
+-v $(pwd)/src:/usr/share/nginx/html \
+-v $(pwd)/blogs:/usr/share/nginx/html/blogs \
+-v $(pwd)/nginx.conf:/etc/nginx/nginx.conf \
+nginx:alpine
 ```
 
 ## Markdown Style Guide

@@ -10,6 +10,9 @@ COPY src /usr/share/nginx/html
 # Copy the blogs directory to the nginx public folder
 COPY blogs /usr/share/nginx/html/blogs
 
+# Copy the custom Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Expose port 80
 EXPOSE 80
 

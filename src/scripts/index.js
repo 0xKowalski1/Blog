@@ -1,45 +1,51 @@
 function init() {
+  const path = window.location.pathname.substring(1);
+  path ? navigateToBlog(path) : loadBlogs();
+}
+
+function loadBlogs() {
   fetch("/blogs/index.json")
     .then((response) => response.json())
     .then((blogs) => {
       const blogsContainer = document.getElementById("blogs-container");
-      blogsContainer.innerHTML = "";
-      blogs.forEach((blog) => {
-        const blogElement = document.createElement("div");
-        blogElement.innerHTML = `<a href="#${blog.path}" class="blog-link">${blog.name}</a>`;
-        blogsContainer.appendChild(blogElement);
-      });
+      blogsContainer.innerHTML = blogs
+        .map(
+          (blog) =>
+            `<div><a href="/${blog.path}" class="blog-link">${blog.name}</a></div>`
+        )
+        .join("");
       attachLinkListeners();
     });
 }
 
 function attachLinkListeners() {
   document.querySelectorAll(".blog-link").forEach((link) => {
-    link.onclick = function (e) {
+    link.addEventListener("click", (e) => {
       e.preventDefault();
-      const filename = e.target.getAttribute("href").substring(1); // Remove the leading '#'
-      navigateToBlog(filename);
-    };
+      navigateToBlog(e.target.pathname.substring(1));
+    });
   });
 }
 
 function navigateToBlog(filename) {
-  history.pushState({ path: filename }, "", filename);
+  history.pushState({ path: filename }, "", `/${filename}`);
   fetch(`/blogs/${filename}.md`)
     .then((response) => response.text())
     .then((markdown) => {
-      document.getElementById("blog-content").innerHTML =
+      const blogContent = document.getElementById("blog-content");
+      blogContent.innerHTML =
+        `<button onclick="loadHome()">Back to Home</button>` +
         parseMarkdown(markdown);
+      document.getElementById("blogs-container").innerHTML = "";
     });
 }
 
-window.addEventListener("popstate", function (event) {
-  if (event.state && event.state.path) {
-    navigateToBlog(event.state.path);
-  } else {
-    // Handle the case where there is no state, e.g., navigating back to the initial state
-    init(); // Your initial load function to display the home page or blog list
-  }
-});
+function loadHome() {
+  history.pushState(null, "", "/");
+  loadBlogs();
+  document.getElementById("blog-content").innerHTML = "";
+}
+
+window.addEventListener("popstate", () => init());
 
 init();
