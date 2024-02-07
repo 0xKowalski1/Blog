@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Blog</title>
+  </head>
+  <body>
+    <div>
+        <h1>0xKowalski</h1>
+        <h2>Blog</h2>
+
+        <div id="blog"></div>
+    </div>
+
+    <script>
+   function parseMarkdown(markdownText) {
+  // Initialize variables
+  let inCodeBlock = false;
+  let htmlText = '';
+
+  // Split the text by lines and iterate over each line
+  markdownText.split('\n').forEach(line => {
+    // Toggle code block state and append appropriate tag
+    if (line.startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+      htmlText += inCodeBlock ? '<pre><code>' : '</code></pre>\n';
+      return; // Skip further processing for code block markers
+    }
+
+    // Handle content inside code blocks
+    if (inCodeBlock) {
+      htmlText += line + '\n';
+      return;
+    }
+
+    // Process markdown outside of code blocks
+    if (line.startsWith('# ')) {
+      htmlText += `<h1>${line.substring(2)}</h1>\n`;
+    } else if (line.startsWith('## ')) {
+      htmlText += `<h2>${line.substring(3)}</h2>\n`;
+    } else {
+      // Apply markdown transformations for bold, italic, and links
+      line = line
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer noopener">$1</a>');
+
+      // Only add paragraph tags if the line is not empty
+      if (line) {
+        htmlText += `<p>${line}</p>\n`;
+      }
+    }
+  });
+
+  return htmlText;
+}
+
+        fetch('blogs/00-Blockchain.md')
+        .then(response => response.text())
+        .then(markdown => {
+            console.log(markdown)
+            document.getElementById('blog').innerHTML =
+              parseMarkdown(markdown);
+        });
+    </script>
+  </body>
+</html>
