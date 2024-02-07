@@ -1,0 +1,3 @@
+#Empty blogs dir is created in src when running in dev mode
+src/blogs 
+
