@@ -4,15 +4,29 @@ function init() {
 }
 
 function loadBlogs() {
+  document.getElementById("blog-content").innerHTML = "";
   fetch("/blogs/index.json")
     .then((response) => response.json())
     .then((blogs) => {
+      const sortedBlogs = blogs.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+
       const blogsContainer = document.getElementById("blogs-container");
-      blogsContainer.innerHTML = blogs
-        .map(
-          (blog) =>
-            `<div><a href="/${blog.path}" class="blog-link">${blog.name}</a></div>`
-        )
+      blogsContainer.innerHTML = sortedBlogs
+        .map((blog) => {
+          const date = new Date(blog.date);
+          const formattedDate = date.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+
+          return `<div class="blog-card">
+                    <a href="/${blog.path}" class="blog-link">${blog.name}</a>
+                    <span class="blog-date">${formattedDate}</span>
+                  </div>`;
+        })
         .join("");
       attachLinkListeners();
     });
@@ -43,7 +57,6 @@ function navigateToBlog(filename) {
 function loadHome() {
   history.pushState(null, "", "/");
   loadBlogs();
-  document.getElementById("blog-content").innerHTML = "";
 }
 
 window.addEventListener("popstate", () => init());
