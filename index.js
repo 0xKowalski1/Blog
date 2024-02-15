@@ -56,6 +56,11 @@ function navigateToBlog(filename) {
         `<button onclick="loadHome()">Back to Home</button>` +
         parseMarkdown(markdown);
       document.getElementById("blogs-container").innerHTML = "";
+    })
+    .catch(() => {
+      const blogContent = document.getElementById("blog-content");
+      blogContent.innerHTML =
+        '<div class="not-found">Page not found. <a href="/">Go back home</a>.</div>';
     });
 }
 
