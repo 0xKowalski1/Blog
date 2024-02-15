@@ -49,8 +49,15 @@ function attachLinkListeners() {
 function navigateToBlog(filename) {
   history.pushState({ path: filename }, "", `/${filename}`);
   fetch(`/blogs/${filename}.md`)
-    .then((response) => response.text())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Not Found");
+      }
+
+      return response.text();
+    })
     .then((markdown) => {
+      console.log(response);
       const blogContent = document.getElementById("blog-content");
       blogContent.innerHTML =
         `<button onclick="loadHome()">Back to Home</button>` +
