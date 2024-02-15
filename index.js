@@ -29,6 +29,11 @@ function loadBlogs() {
         })
         .join("");
       attachLinkListeners();
+    })
+    .catch(() => {
+      const blogContent = document.getElementById("blog-content");
+      blogContent.innerHTML =
+        '<div class="not-found">Page not found. <a href="/">Go back home</a>.</div>';
     });
 }
 
