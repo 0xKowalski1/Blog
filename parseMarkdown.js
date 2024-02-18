@@ -1,4 +1,4 @@
-function parseMarkdown(markdownText) {
+const parseMarkdown = (markdownText) => {
   let inCodeBlock = false;
   let htmlText = "";
 
@@ -38,4 +38,4 @@ function parseMarkdown(markdownText) {
   });
 
   return htmlText;
-}
+};

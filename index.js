@@ -1,81 +1,60 @@
-function init() {
+let blogs = [];
+
+const init = () => {
   const path = window.location.pathname.substring(1);
   path ? navigateToBlog(path) : loadBlogs();
-}
+};
 
-function loadBlogs() {
+const loadBlogs = async () => {
+  history.pushState(null, "", "/");
+  if (!blogs.length) blogs = await (await fetch("/blogs/index.json")).json();
+
+  const blogsContainer = document.getElementById("blogs-container");
+  blogsContainer.innerHTML = blogs
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .map(
+      (blog) => `<div class="blog-card">
+                        <a href="/${blog.path}" class="blog-link">${
+        blog.name
+      }</a>
+                        <span class="blog-date">${new Date(
+                          blog.date
+                        ).toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}</span>
+                      </div>`
+    )
+    .join("");
   document.getElementById("blog-content").innerHTML = "";
-  fetch("/blogs/index.json")
-    .then((response) => response.json())
-    .then((blogs) => {
-      const sortedBlogs = blogs.sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
-      );
+  attachLinkListeners();
+};
 
-      const blogsContainer = document.getElementById("blogs-container");
-      blogsContainer.innerHTML = sortedBlogs
-        .map((blog) => {
-          const date = new Date(blog.date);
-          const formattedDate = date.toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          });
+const attachLinkListeners = () => {
+  document.querySelectorAll(".blog-link").forEach(
+    (link) =>
+      (link.onclick = (e) => {
+        e.preventDefault();
+        navigateToBlog(e.target.pathname.substring(1));
+      })
+  );
+};
 
-          return `<div class="blog-card">
-                    <a href="/${blog.path}" class="blog-link">${blog.name}</a>
-                    <span class="blog-date">${formattedDate}</span>
-                  </div>`;
-        })
-        .join("");
-      attachLinkListeners();
-    })
-    .catch(() => {
-      const blogContent = document.getElementById("blog-content");
-      blogContent.innerHTML =
-        '<div class="not-found">Page not found. <a href="/">Go back home</a>.</div>';
-    });
-}
-
-function attachLinkListeners() {
-  document.querySelectorAll(".blog-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      navigateToBlog(e.target.pathname.substring(1));
-    });
-  });
-}
-
-function navigateToBlog(filename) {
+const navigateToBlog = (filename) => {
   history.pushState({ path: filename }, "", `/${filename}`);
   fetch(`/blogs/${filename}.md`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Not Found");
-      }
-
-      return response.text();
-    })
+    .then((response) => response.text())
     .then((markdown) => {
-      console.log(response);
-      const blogContent = document.getElementById("blog-content");
-      blogContent.innerHTML =
-        `<button onclick="loadHome()">Back to Home</button>` +
-        parseMarkdown(markdown);
       document.getElementById("blogs-container").innerHTML = "";
-    })
-    .catch(() => {
       const blogContent = document.getElementById("blog-content");
-      blogContent.innerHTML =
-        '<div class="not-found">Page not found. <a href="/">Go back home</a>.</div>';
+      blogContent.innerHTML = markdown.includes("<!DOCTYPE html>") // simple way to handle 404s, as vercel will respond with index.html if no blog is found.
+        ? `<button onclick="loadBlogs()">Back to Home</button><h1>404</h1><div>Oops! '${filename}' does not exist!</div>`
+        : `<button onclick="loadBlogs()">Back to Home</button>${parseMarkdown(
+            markdown
+          )}`;
     });
-}
+};
 
-function loadHome() {
-  history.pushState(null, "", "/");
-  loadBlogs();
-}
-
-window.addEventListener("popstate", () => init());
-
+window.addEventListener("popstate", init);
 init();
