@@ -10,7 +10,7 @@ const loadBlogs = async () => {
   if (!blogs.length) blogs = await (await fetch("/blogs/index.json")).json();
 
   const blogsContainer = document.getElementById("blogs-container");
-  blogsContainer.innerHTML = blogs
+  blogsContainer.innerHTML = `<div><h2>Blogs</h2>${blogs
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .map(
       (blog) => `<div class="blog-card">
@@ -26,7 +26,7 @@ const loadBlogs = async () => {
                         })}</span>
                       </div>`
     )
-    .join("");
+    .join("")}</h2>`;
   document.getElementById("blog-content").innerHTML = "";
   attachLinkListeners();
 };

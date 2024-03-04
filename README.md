@@ -1,28 +1,6 @@
 # Lean Blog
 
-This is a simple, lean blog, nothing more, nothing less.
-
-## Build
-
-```
-docker build -t blog .
-```
-
-## Run
-
-```
-docker run -d -p 8080:80 blog
-```
-
-## Dev
-
-```
-docker run -d -p 8080:80 --name dev-blog \
--v $(pwd)/src:/usr/share/nginx/html \
--v $(pwd)/blogs:/usr/share/nginx/html/blogs \
--v $(pwd)/nginx.conf:/etc/nginx/nginx.conf \
-nginx:alpine
-```
+This is a simple blog, nothing more, nothing less.
 
 ## Markdown Style Guide
 
