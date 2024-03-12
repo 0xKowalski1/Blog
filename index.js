@@ -49,8 +49,8 @@ const navigateToBlog = (filename) => {
       document.getElementById("blogs-container").innerHTML = "";
       const blogContent = document.getElementById("blog-content");
       blogContent.innerHTML = markdown.includes("<!DOCTYPE html>") // simple way to handle 404s, as vercel will respond with index.html if no blog is found.
-        ? `<button onclick="loadBlogs()">Back to Home</button><h1>404</h1><div>Oops! '${filename}' does not exist!</div>`
-        : `<button onclick="loadBlogs()">Back to Home</button>${parseMarkdown(
+        ? `<button onclick="loadBlogs()">Back</button><h1>404</h1><div>Oops! '${filename}' does not exist!</div>`
+        : `<button onclick="loadBlogs()">Back</button>${parseMarkdown(
             markdown
           )}`;
     });

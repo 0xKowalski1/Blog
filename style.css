@@ -78,16 +78,8 @@ button:hover {
   background-color: var(--accent-colour-2);
 }
 
-.social-links {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-}
-
-.social-links img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
+.social-links a {
+  padding: 10px;
 }
 
 .blog-card {
