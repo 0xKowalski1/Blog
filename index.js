@@ -9,8 +9,7 @@ const loadBlogs = async () => {
   history.pushState(null, "", "/");
   if (!blogs.length) blogs = await (await fetch("/blogs/index.json")).json();
 
-  const blogsContainer = document.getElementById("blogs-container");
-  blogsContainer.innerHTML = `<div><h2>Blogs</h2>${blogs
+  document.getElementById("blogs-container").innerHTML = `<div><h2>Blogs</h2>${blogs
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .map(
       (blog) => `<div class="blog-card">
