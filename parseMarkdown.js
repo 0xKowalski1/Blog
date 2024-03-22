@@ -59,10 +59,9 @@ const parseMarkdown = (markdownText) => {
           );
 
         if (line.trim() === '') {
-          // This line is empty, add a placeholder paragraph with a non-breaking space
+          // This line is empty, add a new line
           htmlText += '<p>&nbsp;</p>\n';
         } else {
-          // Non-list, non-empty line
           htmlText += `<p>${line}</p>\n`;
         }
       }
